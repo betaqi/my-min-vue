@@ -1,9 +1,19 @@
 import { track, triiger } from "./effect"
+import { ReactiveFlags } from './reactive'
 
 const get = createdGetter()
 const readonlyGet = createdGetter(true)
 export function createdGetter(isReadonly = false) {
   return function get(target, key) {
+
+    if (key === ReactiveFlags.IS_REACTIVE) {
+      return !isReadonly
+    }
+
+    if(key === ReactiveFlags.IS_READONLY) {
+      return isReadonly
+    }
+
     if (!isReadonly) {
       // TODO:  收集依赖
       track(target, key)

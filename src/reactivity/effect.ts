@@ -1,7 +1,10 @@
+let activeEffect: ActiveEffect
+let shouldTrack = true // 是否收集依赖
 class ActiveEffect {
   private _fn: Function
   deps: any = []
   onStop: Function
+  active = true
   scheduler: Function
   constructor(
     fn: Function,
@@ -14,12 +17,24 @@ class ActiveEffect {
 
   run() {
     activeEffect = this
-    return this._fn()
+    if (this.active) {
+      return this._fn()
+    }
+
+    shouldTrack = false
+    const res = this._fn()
+    shouldTrack = true
+    return res
+
   }
 
   stop() {
-    cleanupEffect(this)
-    this.onStop && this.onStop()
+    if (this.active) {
+      shouldTrack = false
+      cleanupEffect(this)
+      this.onStop && this.onStop()
+      this.active = false
+    }
   }
 }
 
@@ -42,7 +57,7 @@ export function track(target, key) {
     dep = new Set()
     deepMap.set(key, dep)
   }
-
+  if (!shouldTrack) return
   dep.add(activeEffect)
   activeEffect && activeEffect.deps.push(dep)
 }
@@ -59,7 +74,6 @@ export function triiger(target, key) {
   }
 }
 
-let activeEffect: ActiveEffect
 export function effect(fn: Function, options?: any) {
 
   const _effect = new ActiveEffect(fn, options)
