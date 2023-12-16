@@ -1,7 +1,7 @@
 import { readonly, isReactive, isReadonly } from '../reactive'
 
 describe('readonly', () => {
-  it('happy path', () => {
+  it('isReactive', () => {
     const obj = { foo: 1, bar: { baz: 2 } }
     const wrapped = readonly(obj)
     expect(wrapped).not.toBe(obj)
@@ -9,6 +9,19 @@ describe('readonly', () => {
     expect(isReadonly(wrapped)).toBe(true)
     expect(isReadonly(obj)).toBe(false)
     expect(wrapped.foo).toBe(1)
+  })
+
+  it('nested isReadonly', () => {
+    const object = {
+      array: [{ bar: 1 }],
+      nested: {
+        foo: 1
+      }
+    }
+    const wrapped = readonly(object)
+    expect(isReadonly(wrapped.nested)).toBe(true)
+    expect(isReadonly(wrapped.array)).toBe(true)
+    expect(isReadonly(wrapped.array[0])).toBe(true)
   })
 
   it('warn then called set', () => {

@@ -7,4 +7,18 @@ describe('isReactive', () => {
     expect(isReactive(wrapped)).toBe(true)
     expect(isReactive(user)).toBe(false)
   })
+
+  it('nested isReactive', () => {
+    const object = {
+      array: [{ bar: 1 }],
+      nested: {
+        foo: 1
+      }
+    }
+    const wrapped = reactive(object)
+    expect(isReactive(wrapped.nested)).toBe(true)
+    expect(isReactive(wrapped.array)).toBe(true)
+    expect(isReactive(wrapped.array[0])).toBe(true)
+
+  })
 })

@@ -20,10 +20,7 @@ class ActiveEffect {
     if (this.active) {
       return this._fn()
     }
-
-    shouldTrack = false
     const res = this._fn()
-    shouldTrack = true
     return res
 
   }
