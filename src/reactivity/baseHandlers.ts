@@ -16,6 +16,10 @@ export function createdGetter(isReadonly = false, isShallowRed = false) {
       return isReadonly
     }
 
+    if (key === ReactiveFlags.IS_PROXY) {
+      return true
+    }
+
 
 
     const res = Reflect.get(target, key)
