@@ -43,6 +43,7 @@ function cleanupEffect(effect) {
 
 const targetMap = new Map()
 export function track(target, key) {
+  if (!isTracking()) return
   let deepMap = targetMap.get(target)
   if (!deepMap) {
     deepMap = new Map()
@@ -54,14 +55,22 @@ export function track(target, key) {
     dep = new Set()
     deepMap.set(key, dep)
   }
-  if (!shouldTrack) return
+  trackEffect(dep)
+}
+
+export function trackEffect(dep) {
+  if (dep.has(activeEffect)) return
   dep.add(activeEffect)
-  activeEffect && activeEffect.deps.push(dep)
+  activeEffect.deps.push(dep)
 }
 
 export function triiger(target, key) {
   const deepMap = targetMap.get(target)
   const dep = deepMap.get(key)
+  triigerEffect(dep)
+}
+
+export function triigerEffect(dep) {
   for (const effect of dep) {
     if (effect.scheduler) {
       effect.scheduler()
@@ -85,4 +94,8 @@ export function effect(fn: Function, options?: any) {
 
 export function stop(runner) {
   runner.effect.stop()
+}
+
+export function isTracking() {
+  return shouldTrack && activeEffect !== undefined
 }

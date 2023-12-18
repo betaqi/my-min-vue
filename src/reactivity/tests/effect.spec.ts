@@ -11,7 +11,6 @@ describe('effect', () => {
     })
     expect(nextAge).toBe(11)
     user.age++
-    console.log(user.age)
     expect(nextAge).toBe(12)
   })
 

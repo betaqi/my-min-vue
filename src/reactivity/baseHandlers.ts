@@ -1,5 +1,6 @@
 import { track, triiger } from "./effect"
 import { ReactiveFlags, reactive, readonly } from './reactive'
+import { isObject } from "./util"
 
 const get = createdGetter()
 const readonlyGet = createdGetter(true)
@@ -69,6 +70,3 @@ export const shallowReadonlyHandlers = {
   }
 }
 
-function isObject(val) {
-  return typeof val === 'object' && val !== null
-}
