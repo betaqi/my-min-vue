@@ -1,4 +1,4 @@
-import { isRef, ref, unRef } from '../ref'
+import { isRef, proxyRefs, ref, unRef } from '../ref'
 import { effect } from '../effect'
 import { reactive } from '../reactive'
 describe('ref', () => {
@@ -24,7 +24,7 @@ describe('ref', () => {
     expect(dummy).toBe(3)
     foo.value++
     expect(dummy).toBe(4)
-    
+
   })
 
   it('should make nested properties reactive', () => {
@@ -38,20 +38,35 @@ describe('ref', () => {
     expect(dummy).toBe(2)
   })
 
-  it('isRef',()=>{
+  it('isRef', () => {
     const a = ref(1)
-    const reactiveA = reactive({a:1})
+    const reactiveA = reactive({ a: 1 })
     expect(isRef(a)).toBe(true)
     expect(isRef(1)).toBe(false)
     expect(isRef(reactiveA)).toBe(false)
   })
 
-  it('unRef',()=>{
+  it('unRef', () => {
     const a = ref(1)
     const b = 22
-    const obj = reactive({a:1})
+    const obj = reactive({ a: 1 })
     expect(unRef(a)).toBe(1)
     expect(unRef(b)).toBe(22)
     expect(unRef(obj)).toBe(obj)
+  })
+
+  it('proxyRefs', () => {
+    const user = {
+      age: ref(10),
+      name: 'jack'
+    }
+    const proxyUser = proxyRefs(user)
+    expect(proxyUser.age).toBe(10)
+    expect(proxyUser.name).toBe('jack')
+
+    proxyUser.age = 20
+    expect(proxyUser.age).toBe(20)
+    expect(user.age.value).toBe(20)
+
   })
 })

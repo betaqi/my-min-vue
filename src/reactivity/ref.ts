@@ -41,6 +41,25 @@ export function unRef(ref) {
   return isRef(ref) ? ref._value : ref
 }
 
+export function proxyRefs(objectWithRefs) {
+  return new Proxy(objectWithRefs, {
+    get(target, key, receiver) {
+      
+      return unRef(Reflect.get(target, key))
+    },
+    set(target, key, newValue, receiver) {
+      const oldValue = target[key]
+      if (isRef(oldValue) && !isRef(newValue)) {
+        oldValue.value = newValue
+        return true
+      } else {
+        return Reflect.set(target, key, newValue)
+      }
+    },
+
+  })
+}
+
 function convert(val) {
   return isObject(val) ? reactive(val) : val
 }
