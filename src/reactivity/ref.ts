@@ -5,6 +5,7 @@ class RefImpl {
   private _value: any
   private _rowValue: any
   private dep: any
+  __v_isRef = true
   constructor(value) {
     this._value = convert(value)
     this.dep = new Set()
@@ -30,6 +31,14 @@ class RefImpl {
 export function ref(value) {
   return new RefImpl(value)
 
+}
+
+export function isRef(ref) {
+  return !!ref.__v_isRef
+}
+
+export function unRef(ref) {
+  return isRef(ref) ? ref._value : ref
 }
 
 function convert(val) {
