@@ -1,6 +1,6 @@
-let activeEffect: ActiveEffect
+let activeEffect: EffectImpl
 let shouldTrack = true // 是否收集依赖
-class ActiveEffect {
+export class EffectImpl {
   private _fn: Function
   deps: any = []
   onStop: Function
@@ -82,7 +82,7 @@ export function triigerEffect(dep) {
 
 export function effect(fn: Function, options?: any) {
 
-  const _effect = new ActiveEffect(fn, options)
+  const _effect = new EffectImpl(fn, options)
 
   _effect.run()
 
